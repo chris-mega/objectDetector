@@ -1,0 +1,17 @@
+object:
+- ball:
+    colour:
+    - 0
+    - 0
+    - 0
+    lower_bound:
+    - 0
+    - 131
+    - 51
+    max_size: 0
+    min_size: 0
+    name: ball
+    upper_bound:
+    - 103
+    - 238
+    - 209
