@@ -1,3 +1,4 @@
+#! /usr/bin/env python
 import cv2 as cv
 import numpy as np
 import math
@@ -9,10 +10,11 @@ DEBUG = 'debug'
 class Vision:
     def __init__(self, config):
         self.parser = Parser()
+        self.frame = None
         self.min_size = config['min_size']
         self.max_size = config['max_size']
 
-        self.cap = cv.VideoCapture(1)
+        self.cap = cv.VideoCapture(0)
 
         col_lb = config['lower_bound']
         col_ub = config['upper_bound']
@@ -30,14 +32,9 @@ class Vision:
         cv.createTrackbar('V (lower)', DEBUG, 0, 255, lambda val: self.update_from_trackbars(val, 'VL'))
         cv.createTrackbar('V (upper)', DEBUG, 0, 255, lambda val: self.update_from_trackbars(val, 'VU'))
 
-        cv.setTrackbarPos('H (lower)', DEBUG, col_lb[0])
-        cv.setTrackbarPos('H (upper)', DEBUG, col_ub[0])
-
-        cv.setTrackbarPos('S (lower)', DEBUG, col_lb[1])
-        cv.setTrackbarPos('S (upper)', DEBUG, col_ub[1])
-
-        cv.setTrackbarPos('V (lower)', DEBUG, col_lb[2])
-        cv.setTrackbarPos('V (upper)', DEBUG, col_ub[2])
+        self.update_trackbars(col_lb[0], col_ub[0], \
+            col_lb[1], col_ub[1], \
+                col_lb[2], col_ub[2])
 
         cv.setMouseCallback(MAIN_WINDOW_NAME, self.mouse_cb)
 
@@ -61,6 +58,16 @@ class Vision:
 
         self.parser.write_values(bound, index, val)
 
+
+    def update_trackbars(self, hl, hu, sl, su, vl, vu):
+        cv.setTrackbarPos('H (lower)', DEBUG, hl)
+        cv.setTrackbarPos('H (upper)', DEBUG, hu)
+
+        cv.setTrackbarPos('S (lower)', DEBUG, sl)
+        cv.setTrackbarPos('S (upper)', DEBUG, su)
+
+        cv.setTrackbarPos('V (lower)', DEBUG, vl)
+        cv.setTrackbarPos('V (upper)', DEBUG, vu)
         
 
     def create_hsv(self):
@@ -95,11 +102,7 @@ class Vision:
 
             init_bound = 20
 
-            cv.setTrackbarPos('H (lower)', DEBUG, h_mean - init_bound)
-            cv.setTrackbarPos('H (upper)', DEBUG, h_mean + init_bound)
-
-            cv.setTrackbarPos('S (lower)', DEBUG, s_mean - init_bound)
-            cv.setTrackbarPos('S (upper)', DEBUG, s_mean + init_bound)
-
-            cv.setTrackbarPos('V (lower)', DEBUG, v_mean - init_bound)
-            cv.setTrackbarPos('V (upper)', DEBUG, v_mean + init_bound)
+            self.update_trackbars(h_mean - init_bound, h_mean + init_bound, \
+                s_mean - init_bound, s_mean + init_bound, \
+                    v_mean - init_bound, v_mean + init_bound)
+                    
