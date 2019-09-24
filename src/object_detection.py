@@ -1,8 +1,19 @@
 import cv2 as cv
 import numpy as np
+import os
 
-def ball_tracker(frame, debug):
+def ball_tracker(frame, debug, cascade=None):
     inp = frame.copy()
+
+    gray = cv.cvtColor(inp, cv.COLOR_BGR2GRAY)
+
+    if cascade is not None:
+        balls = cascade.detectMultiScale(gray)
+
+        for (x, y, w, h) in balls:
+            cv.rectangle(frame, (x, y), (x+w, y+h), (255,0,0), 2)
+
+    
     # with color
     _, thresh = cv.threshold(debug.copy(), 127, 255, 0)
     _, contours, _ = cv.findContours(thresh, cv.RETR_EXTERNAL, cv.CHAIN_APPROX_SIMPLE)
@@ -47,5 +58,6 @@ def ball_tracker(frame, debug):
     #         cv.rectangle(frame, (x - r, y - r), (x + r, y + r), (0, 255, 0), 2)
 
     return x, y, radius
+
 
 
