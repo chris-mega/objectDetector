@@ -1,6 +1,7 @@
 import cv2 as cv
 import numpy as np
 import os
+import math
 
 def ball_tracker_cascade(frame, cascade):
     inp = frame.copy()
@@ -47,34 +48,11 @@ def ball_tracker(frame, debug, cascade=None):
         else:
             x, y, radius = -1, -1, -1
 
-    # without color, just circle detection
-    # gray = cv.cvtColor(inp, cv.COLOR_BGR2GRAY)
-    # cv.imshow('gray',gray)
-    # edges = cv.Canny(gray, 100, 200)
-    # circles = cv.HoughCircles(gray, cv.HOUGH_GRADIENT, 1.2, 100)
-    # if circles is not None:
-    #     circles = np.round(circles[0,:]).astype('int')
-
-    #     for (x,y,r) in circles:
-    #         cv.rectangle(frame, (x - r, y - r), (x + r, y + r), (0, 255, 0), 2)
-
     return x, y, radius
 
 
 def marker_detect(frame, forward, left, right):
     gray = cv.cvtColor(frame, cv.COLOR_BGR2GRAY)
-    # edges = cv.Canny(gray, 50, 120)
-    # min_line_length = 100
-    # max_line_gap = 50
-    # lines = cv.HoughLinesP(edges, 1, np.pi/180, 100, min_line_length, max_line_gap)
-
-    # inp = frame.copy()
-    # if lines is not None:
-    #     for x1, y1, x2, y2 in lines[0]:
-    #         cv.line(inp, (x1, y1), (x2, y2), (0, 255, 0), 2)
-
-    # cv.imshow('edges', edges)
-    # cv.imshow('lines', inp)
 
     gray = cv.blur(gray, (3,3))
     _, thresh = cv.threshold(gray, 150, 255, cv.THRESH_BINARY)
@@ -129,22 +107,57 @@ def marker_detect(frame, forward, left, right):
 
         dst = cv.warpPerspective(frame, M, (400, 400))
 
-        cv.imshow('dst', dst)        
+        gray_dst = cv.cvtColor(dst, cv.COLOR_BGR2GRAY)
+        cann = cv.Canny(gray_dst, 30, 200, apertureSize=3)
+        lines = cv.HoughLines(cann, 1, np.pi/180, 100)
+        arrow = []
+        if lines is not None:
+            for line in lines:
+                rho,theta = line[0]
+                
+                a = np.cos(theta)
+                b = np.sin(theta)
+                x0 = a*rho
+                y0 = b*rho
+                x1 = int(x0 + 1000*(-b))
+                y1 = int(y0 + 1000*(a))
+                x2 = int(x0 - 1000*(-b))
+                y2 = int(y0 - 1000*(a))
+                if (theta >= math.pi/4-math.pi/8 and theta <= math.pi/4+math.pi/8) or (theta >= math.pi/2+math.pi/4-math.pi/8 and theta <= math.pi/2+math.pi/4+math.pi/8):
+                    arrow.append([x1, y1, x2, y2])
+                    cv.line(dst,(x1,y1),(x2,y2),(0,0,255),2)
 
-        orb = cv.ORB_create()
+        if len(arrow) == 2:
+            # arrow = [x1, y1, x2, y2], [x3, y3, x4, y4]
+            # line-line intersection: ta = ((x4-x3)(y1-y3)-(y4-y3)(x1-x3)) / ((y4-y3)(x2-x1)-(x4-x3)(y2-y1))
+            #                         tb = ((x2-x1)(y1-y3)-(y2-y1)(x1-x3)) / ((y4-y3)(x2-x1)-(x4-x3)(y2-y1))
+            x1, y1, x2, y2 = arrow[0][0], arrow[0][1], arrow[0][2], arrow[0][3]
+            x3, y3, x4, y4 = arrow[1][0], arrow[1][1], arrow[1][2], arrow[1][3]
 
-        kp1, des1 = orb.detectAndCompute(forward, None)
-        kp2, des2 = orb.detectAndCompute(dst, None)
+            # print('1', x1,y1,x2,y2)
+            # print('2', x3,y3,x4,y4)
 
-        bf = cv.BFMatcher(cv.NORM_HAMMING, crossCheck=True)
+            ta = float((x4 - x3)*(y1 - y3) - (y4 - y3)*(x1 - x3)) / float((y4 - y3)*(x2 - x1) - (x4 - x3)*(y2 - y1))
+            tb = float((x2 - x1)*(y1 - y3) - (y2 - y1)*(x1 - x3)) / float((y4 - y3)*(x2 - x1) - (x4 - x3)*(y2 - y1))
 
-        matches = bf.match(des1, des2)
+            if ta != 0 and tb != 0: 
+                xa = x1 + ta*(x2 - x1)
+                ya = y1 + ta*(y2 - y1)
+                xb = x3 + tb*(x4 - x3)
+                yb = y3 + tb*(y4 - y3)
 
-        if len(matches) > 4:
-            print('forward')
+                # print(xa, ya)
+
+                if ya < 50:
+                    print('[ARROW] forward')
+                elif xa < 100:
+                    print('[ARROW] left')
+                elif xa > 300:
+                    print('[ARROW] right')
         else:
-            print('nop')
+            print('[NO ARROW]')
+        
+        cv.imshow('dst', dst)
 
         cv.drawContours(frame, [posible_arrow], 0, (0,255,0), 2)
-
 
