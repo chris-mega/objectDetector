@@ -269,7 +269,6 @@ neg/neg_380.jpg
 neg/neg_531.jpg
 neg/neg_146.jpg
 neg/neg_13.jpg
-neg/neg_477.jpg
 neg/neg_292.jpg
 neg/neg_467.jpg
 neg/neg_493.jpg
