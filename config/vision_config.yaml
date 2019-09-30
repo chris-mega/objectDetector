@@ -5,13 +5,13 @@ object:
     - 0
     - 0
     lower_bound:
-    - 0
-    - 0
-    - 0
+    - 31
+    - 42
+    - 130
     max_size: 0
     min_size: 0
     name: ball
     upper_bound:
-    - 20
-    - 20
-    - 20
+    - 90
+    - 255
+    - 255

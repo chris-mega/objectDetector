@@ -3,6 +3,7 @@ from src.object_detection import ball_tracker, ball_tracker_cascade, marker_dete
 import cv2 as cv
 from src.yaml_parser import Parser
 import os
+import math
 
 
 if __name__ == '__main__':
@@ -28,28 +29,56 @@ if __name__ == '__main__':
         vision.read_camera()
         vision.create_hsv()
 
+        area1, area2 = -1, -1
+
         # ball with color
         x_circle, y_circle, radius = ball_tracker(vision.frame, vision.debug, ball_cascade)
+
+        if radius > -1:
+            area1 = math.pi*(radius**2)
+            print('[BALL color] x: {0}\ty: {1}\tarea: {2}'.format(x_circle, y_circle, area1))
+
+        
         # ball with cascade
-        ball_t_cascade = ball_tracker_cascade(vision.frame, ball_cascade)
+        ball_c_x, ball_c_y, ball_c_w, ball_c_h = ball_tracker_cascade(vision.frame, ball_cascade)
+        
+        if ball_c_w > -1 and ball_c_w > -1:
+            area2 = ball_c_w * ball_c_h
+            x = ball_c_x + ball_c_w/2
+            y = ball_c_y + ball_c_h/2
+            print('[BALL cascade] x: {0}\ty: {1}\tarea: {2}'.format(x, y, area2))        
+
+
         # arrow detect
         marker_detect(vision.frame, forward, left, right)
+
+
+        # combination cascade and color
+        if radius > -1 and ball_c_w > -1 and ball_c_w > -1 and abs((ball_c_x+ ball_c_w/2) - x_circle) < 20:
+            area = (area1 + area2)/2.
+            x = int((ball_c_x + ball_c_w/2 + x_circle)/2)
+            y = int((ball_c_y + ball_c_h/2 + y_circle)/2)
+
+            w = int((area**(0.5)))
+
+            cv.rectangle(vision.frame, (x-w/2, y-w/2), (x + w/2, y + w/2), (0,0,0), 2)
+
+            print('[BALL estimated] x: {0}\ty: {1}\tarea: {2}'.format(x, y, area))
 
         # draw color balls
         if x_circle > -1 and y_circle > -1 and radius > -1:
             cv.circle(vision.frame, (int(x_circle), int(y_circle)), int(radius), (0,255,255), 2)
 
         # draw cascade balls
-        if ball_t_cascade is not None:
-            for (x, y, w, h) in ball_t_cascade:
-                cv.rectangle(vision.frame, (x, y), (x+w, y+h), (255,0,0), 2)
+        if ball_c_x > -1 and ball_c_y > -1 and ball_c_w > -1 and ball_c_h > -1:
+            cv.rectangle(vision.frame, (ball_c_x, ball_c_y), (ball_c_x + ball_c_w, ball_c_y + ball_c_h), (255,0,0), 2)
         
         cv.imshow(MAIN_WINDOW_NAME, vision.frame)
         cv.imshow(DEBUG, vision.debug)
-        # cv.imshow('hsv', vision.hsv)
 
         if cv.waitKey(1) == ord('q'):
             break
 
     vision.cap.release()
     cv.destroyAllWindows()
+    

@@ -8,6 +8,8 @@ from src.object_detection import ball_tracker
 import cv2 as cv
 from src.yaml_parser import Parser
 
+# diferent function to help with haar cascade
+
 def download_google():
     folder = os.getcwd()
     folder = os.path.join(folder, 'tools/urls.txt')
