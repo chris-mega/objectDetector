@@ -3,7 +3,7 @@
 
 This was originally an assignment for COMP4180-"Intelligent Mobile Robotics" at University of Manitoba.
 
-Please see `Report.pdf` for a detailed description of the implementation and `Honesty.pdf` for the Honesty Declaration
+Please see `Report.pdf` for a detailed description of the project's development
 
 ## Dependencies
 Your system must contain the following programs/libraries installed
