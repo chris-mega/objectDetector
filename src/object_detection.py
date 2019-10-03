@@ -166,6 +166,7 @@ def marker_detect(frame, forward, left, right):
                     arrow_name = 'left'
                 elif xa > 300:
                     arrow_name = 'right'
+                print('[ARROW] {}'.format(arrow_name))
         else:
             arrow_name = 'None'
 
