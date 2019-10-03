@@ -50,8 +50,8 @@ if __name__ == '__main__':
 
 
         # arrow detect
-        marker_detect(vision.frame, forward, left, right)
-
+        arrow = marker_detect(vision.frame, forward, left, right)
+        # print('[ARROW] {}'.format(arrow))
 
         # combination cascade and color
         if radius > -1 and ball_c_w > -1 and ball_c_w > -1 and abs((ball_c_x+ ball_c_w/2) - x_circle) < 20:

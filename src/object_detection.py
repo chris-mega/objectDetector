@@ -64,6 +64,7 @@ def ball_tracker(frame, debug, min_size=200):
 
 def marker_detect(frame, forward, left, right):
     # detect the arrows
+    arrow_name = 'None'
     gray = cv.cvtColor(frame, cv.COLOR_BGR2GRAY)
 
     gray = cv.blur(gray, (3,3))
@@ -160,15 +161,19 @@ def marker_detect(frame, forward, left, right):
 
                 # decide which arrow depending of the intersection point of lines
                 if ya < 50:
-                    print('[ARROW] forward')
+                    arrow_name = 'forward'
                 elif xa < 100:
-                    print('[ARROW] left')
+                    arrow_name = 'left'
                 elif xa > 300:
-                    print('[ARROW] right')
+                    arrow_name = 'right'
         else:
-            print('[NO ARROW]')
+            arrow_name = 'None'
+
+        cv.putText(dst, arrow_name, (10,400), cv.FONT_HERSHEY_SIMPLEX,1, (0,0,255),2)
         
         cv.imshow('dst', dst)
 
         cv.drawContours(frame, [posible_arrow], 0, (0,255,0), 2)
+
+    return arrow_name
 
