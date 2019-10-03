@@ -32,7 +32,7 @@ if __name__ == '__main__':
         area1, area2 = -1, -1
 
         # ball with color
-        x_circle, y_circle, radius = ball_tracker(vision.frame, vision.debug, ball_cascade)
+        x_circle, y_circle, radius = ball_tracker(vision.frame, vision.debug, min_size=vision.min_size)
 
         if radius > -1:
             area1 = math.pi*(radius**2)
@@ -40,7 +40,7 @@ if __name__ == '__main__':
 
         
         # ball with cascade
-        ball_c_x, ball_c_y, ball_c_w, ball_c_h = ball_tracker_cascade(vision.frame, ball_cascade)
+        ball_c_x, ball_c_y, ball_c_w, ball_c_h = ball_tracker_cascade(vision.frame, ball_cascade, min_size=vision.min_size)
         
         if ball_c_w > -1 and ball_c_w > -1:
             area2 = ball_c_w * ball_c_h

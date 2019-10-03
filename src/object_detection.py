@@ -3,7 +3,7 @@ import numpy as np
 import os
 import math
 
-def ball_tracker_cascade(frame, cascade):
+def ball_tracker_cascade(frame, cascade, min_size=200):
     # apply the trained haar cascade and compare it with the current frame
 
     inp = frame.copy()
@@ -15,7 +15,7 @@ def ball_tracker_cascade(frame, cascade):
 
         x_circle, y_circle, w_circle, h_circle = -1, -1, -1 , -1
 
-        biggest = -1
+        biggest = min_size
 
         if balls is not None:
             for (x, y, w, h) in balls:
@@ -27,7 +27,7 @@ def ball_tracker_cascade(frame, cascade):
         
 
 
-def ball_tracker(frame, debug, cascade=None):
+def ball_tracker(frame, debug, min_size=200):
     # detect the ball with color
 
     _, thresh = cv.threshold(debug.copy(), 127, 255, 0)
@@ -53,7 +53,8 @@ def ball_tracker(frame, debug, cascade=None):
         if c_size > 0:
             center = (int(M['m10'] / c_size), int(M['m01'] / c_size))
 
-            if radius <= 5:
+            pix_to_cm = (min_size/math.pi)**0.5
+            if radius <= pix_to_cm:
                 x, y, radius = -1, -1, -1
         else:
             x, y, radius = -1, -1, -1
