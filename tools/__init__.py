@@ -1,1 +1,1 @@
-import haar_ball
+from . import haar_ball

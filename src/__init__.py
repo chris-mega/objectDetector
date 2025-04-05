@@ -1,3 +1,3 @@
-import vision
-import object_detection
-import yaml_parser
+from . import yaml_parser
+from . import vision
+from . import object_detection

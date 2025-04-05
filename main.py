@@ -61,7 +61,7 @@ if __name__ == '__main__':
 
             w = int((area**(0.5)))
 
-            cv.rectangle(vision.frame, (x-w/2, y-w/2), (x + w/2, y + w/2), (0,0,0), 2)
+            cv.rectangle(vision.frame, (x-w//2, y-w//2), (x + w//2, y + w//2), (0,0,0), 2)
 
             print('[BALL estimated] x: {0}\ty: {1}\tarea: {2}'.format(x, y, area))
 

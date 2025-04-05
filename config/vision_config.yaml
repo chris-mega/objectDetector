@@ -6,12 +6,12 @@ object:
     - 0
     lower_bound:
     - 0
-    - 0
-    - 0
+    - 114
+    - 150
     max_size: 50000
     min_size: 300
     name: ball
     upper_bound:
-    - 20
-    - 20
-    - 20
+    - 193
+    - 239
+    - 255

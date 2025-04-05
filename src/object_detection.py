@@ -31,7 +31,7 @@ def ball_tracker(frame, debug, min_size=200):
     # detect the ball with color
 
     _, thresh = cv.threshold(debug.copy(), 127, 255, 0)
-    _, contours, _ = cv.findContours(thresh, cv.RETR_EXTERNAL, cv.CHAIN_APPROX_SIMPLE)
+    contours, _ = cv.findContours(thresh, cv.RETR_EXTERNAL, cv.CHAIN_APPROX_SIMPLE)
     center = None
 
     x, y, radius = -1, -1, -1
@@ -72,7 +72,7 @@ def marker_detect(frame, forward, left, right):
 
     edged = cv.Canny(gray, 30, 200)
 
-    img, contours, hier = cv.findContours(edged, cv.RETR_EXTERNAL, cv.CHAIN_APPROX_SIMPLE)
+    contours, hier = cv.findContours(edged, cv.RETR_EXTERNAL, cv.CHAIN_APPROX_SIMPLE)
 
     posible_arrow = None
     area = -1

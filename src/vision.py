@@ -2,7 +2,7 @@
 import cv2 as cv
 import numpy as np
 import math
-from yaml_parser import Parser
+from src.yaml_parser import Parser
 
 MAIN_WINDOW_NAME = 'camera'
 DEBUG = 'debug'

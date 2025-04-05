@@ -1,0 +1,20 @@
+[build-system]
+requires = ["setuptools>=42", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "object-detector"
+version = "0.1.0"
+description = "A Python project for object detection using OpenCV."
+authors = [
+    { name = "Chris Melendez", email = "chris.melendezg@gmail.com" }
+]
+
+dependencies = [
+    "opencv-python",
+    "numpy",
+    "pyyaml"
+]
+
+[tool.setuptools]
+py-modules = ["src.vision", "src.object_detection", "src.yaml_parser"]
